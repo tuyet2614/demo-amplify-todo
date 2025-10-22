@@ -1,5 +1,5 @@
 "use client";
-
+import "@/lib/amplify";
 import React from "react";
 
 type ProvidersProps = {

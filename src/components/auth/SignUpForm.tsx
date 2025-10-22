@@ -4,6 +4,7 @@ import { useState } from "react";
 import { customToast } from "@/components/toast/customToast";
 import OtpInput from "react-otp-input";
 import { useRouter } from "next/navigation";
+import { authService } from "@/lib/auth";
 export default function SignUpForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,12 +20,12 @@ export default function SignUpForm() {
     setError("");
 
     try {
-      // const result = await authService.signUp({ email, password, name });
-      // console.log("🚀 ~ handleSubmit ~ result:", result);
-      // if (result.nextStep.signUpStep === "CONFIRM_SIGN_UP") {
-      //   setSuccess(true);
-      //   customToast.success("We've sent you a verification code");
-      // }
+      const result = await authService.signUp({ email, password, name });
+      console.log("🚀 ~ handleSubmit ~ result:", result);
+      if (result.nextStep.signUpStep === "CONFIRM_SIGN_UP") {
+        setSuccess(true);
+        customToast.success("We've sent you a verification code");
+      }
     } catch (err: any) {
       setError(err.message || "Sign up failed");
     } finally {
@@ -35,9 +36,10 @@ export default function SignUpForm() {
 
   const handleConfirmSignUp = async () => {
     try {
-      // await authService.confirmSignUp({ email, code: otp });
+      await authService.confirmSignUp({ email, code: otp });
       customToast.success("Account confirmed");
-      router.push("/dashboard");
+
+      router.push("/login");
     } catch (err: any) {
       setError(err.message || "Confirm sign up failed");
     } finally {

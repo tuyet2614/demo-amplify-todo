@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import TaskForm from "./tasks/TaskForm";
 import TaskList from "./tasks/TaskList";
+import { authService } from "@/lib/auth";
 
 export default function Dashboard() {
   const [user, setUser] = useState<any>(null);
@@ -15,8 +16,8 @@ export default function Dashboard() {
 
   const loadUser = async () => {
     try {
-      // const currentUser = await authService.getCurrentUser();
-      // setUser(currentUser);
+      const currentUser = await authService.getCurrentUser();
+      setUser(currentUser);
     } catch (error) {
       console.error("Failed to load user:", error);
     } finally {
@@ -26,7 +27,7 @@ export default function Dashboard() {
 
   const handleSignOut = async () => {
     try {
-      // await authService.signOut();
+      await authService.signOut();
       window.location.href = "/login";
     } catch (error) {
       console.error("Sign out failed:", error);

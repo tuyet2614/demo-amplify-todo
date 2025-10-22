@@ -1,5 +1,6 @@
 "use client";
 
+import { authService } from "@/lib/auth";
 import { useState } from "react";
 
 export default function LoginForm() {
@@ -14,11 +15,11 @@ export default function LoginForm() {
     setError("");
 
     try {
-      // const result = await authService.signIn({ email, password });
-      // if (result.isSignedIn) {
-      //   // Redirect to dashboard
-      //   window.location.href = "/dashboard";
-      // }
+      const result = await authService.signIn({ email, password });
+      if (result.isSignedIn) {
+        // Redirect to dashboard
+        window.location.href = "/dashboard";
+      }
     } catch (err: any) {
       setError(err.message || "Login failed");
     } finally {
