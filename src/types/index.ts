@@ -10,9 +10,9 @@ export interface User {
 
 export interface Task {
   id: string;
-  title: string;
-  description?: string;
-  status: TaskStatus;
+  title: string | null;
+  content: string | null;
+  isDone: boolean | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -25,8 +25,8 @@ export enum TaskStatus {
 
 export interface CreateTaskInput {
   title: string;
-  description: string;
-  status: TaskStatus;
+  content: string;
+  isDone: boolean;
   createdAt: string;
   updatedAt: string;
 }

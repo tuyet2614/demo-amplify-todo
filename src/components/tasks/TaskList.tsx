@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Task, TaskStatus } from "@/types";
+import { taskService } from "@/lib/api";
 
 export default function TaskList() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -15,8 +16,8 @@ export default function TaskList() {
   const loadTasks = async () => {
     try {
       setIsLoading(true);
-      // const taskList = await taskService.listTasks();
-      // setTasks(taskList);
+      const taskList = await taskService.listTodos();
+      setTasks(taskList);
     } catch (err: any) {
       setError(err.message || "Failed to load tasks");
     } finally {
@@ -26,11 +27,7 @@ export default function TaskList() {
 
   const toggleTaskStatus = async (task: Task) => {
     try {
-      const newStatus = task.status === TaskStatus.OPEN ? TaskStatus.DONE : TaskStatus.OPEN;
-      // await taskService.updateTask({
-      //   id: task.id,
-      //   status: newStatus,
-      // });
+      await taskService.updateTodo({ id: task.id, value: { isDone: !task.isDone } });
       loadTasks(); // Reload tasks
     } catch (err: any) {
       setError(err.message || "Failed to update task");
@@ -39,7 +36,7 @@ export default function TaskList() {
 
   const deleteTask = async (id: string) => {
     try {
-      // await taskService.deleteTask(id);
+      await taskService.deleteTodo(id);
       loadTasks(); // Reload tasks
     } catch (err: any) {
       setError(err.message || "Failed to delete task");
@@ -66,19 +63,15 @@ export default function TaskList() {
             <div
               key={task.id}
               className={`p-4 border rounded-lg ${
-                task.status === TaskStatus.DONE ? "bg-green-50 border-green-200" : "bg-white border-gray-200"
+                task.isDone ? "bg-green-50 border-green-200" : "bg-white border-gray-200"
               }`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h3
-                    className={`text-lg font-medium ${
-                      task.status === TaskStatus.DONE ? "line-through text-gray-500" : "text-gray-900"
-                    }`}
-                  >
+                  <h3 className={`text-lg font-medium ${task.isDone ? "line-through text-gray-500" : "text-gray-900"}`}>
                     {task.title}
                   </h3>
-                  {task.description && <p className="mt-1 text-sm text-gray-600">{task.description}</p>}
+                  {task.content && <p className="mt-1 text-sm text-gray-600">{task.content}</p>}
                   <div className="mt-2 flex items-center space-x-4 text-xs text-gray-500">
                     <span>Created: {new Date(task.createdAt).toLocaleDateString()}</span>
                   </div>
@@ -87,12 +80,12 @@ export default function TaskList() {
                   <button
                     onClick={() => toggleTaskStatus(task)}
                     className={`px-3 py-1 text-sm rounded ${
-                      task.status === TaskStatus.OPEN
+                      !task.isDone
                         ? "bg-green-100 text-green-800 hover:bg-green-200"
                         : "bg-gray-100 text-gray-800 hover:bg-gray-200"
                     }`}
                   >
-                    {task.status === TaskStatus.OPEN ? "Mark Done" : "Mark Todo"}
+                    {!task.isDone ? "Mark Done" : "Mark Todo"}
                   </button>
                   <button
                     onClick={() => deleteTask(task.id)}

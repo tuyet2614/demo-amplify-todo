@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { storageService } from "@/lib/storage";
 
 interface FileUploadProps {
   onFileUploaded: (fileUrl: string) => void;
@@ -28,10 +27,9 @@ export default function FileUpload({ onFileUploaded, onCancel }: FileUploadProps
     setError("");
 
     try {
-      const path = await storageService.uploadFile(file);
-      const fileUrl = await storageService.getFileUrl(path.path);
-
-      onFileUploaded(fileUrl);
+      // const path = await storageService.uploadFile(file);
+      // const fileUrl = await storageService.getFileUrl(path.path);
+      // onFileUploaded(fileUrl);
     } catch (err: any) {
       setError(err.message || "Upload failed");
     } finally {

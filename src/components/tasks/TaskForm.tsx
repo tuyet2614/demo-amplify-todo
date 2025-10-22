@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CreateTaskInput, TaskStatus } from "@/types";
+import { taskService } from "@/lib/api";
 
 interface TaskFormProps {
   onTaskCreated: () => void;
@@ -22,13 +23,13 @@ export default function TaskForm({ onTaskCreated, onCancel }: TaskFormProps) {
     try {
       const input: CreateTaskInput = {
         title: title.trim(),
-        description: description.trim(),
-        status: TaskStatus.OPEN,
+        content: description.trim(),
+        isDone: false,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
       console.log("🚀 ~ handleSubmit ~ input:", input);
-      // await taskService.createTask(input);
+      await taskService.createTodo(input);
       onTaskCreated();
     } catch (err: any) {
       setError(err.message || "Failed to create task");
