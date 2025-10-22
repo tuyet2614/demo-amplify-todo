@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import FileUpload from "./FileUpload";
+import { authService } from "@/lib/auth";
+import { storageService } from "@/lib/storage";
 
 interface UploadedFile {
   key: string;
@@ -30,8 +32,8 @@ export default function Profile() {
 
   const loadUser = async () => {
     try {
-      // const currentUser = await authService.getCurrentUser();
-      // setUser(currentUser);
+      const currentUser = await authService.getCurrentUser();
+      setUser(currentUser);
     } catch (error) {
       console.error("Failed to load user:", error);
     } finally {
@@ -42,29 +44,29 @@ export default function Profile() {
   const loadUploadedFiles = async () => {
     setIsLoadingFiles(true);
     try {
-      // const files = await storageService.listFiles();
-      // const filesWithUrls = await Promise.all(
-      //   files.map(async (file) => {
-      //     try {
-      //       const url = await storageService.getFileUrl(file.path);
-      //       return {
-      //         key: file.path,
-      //         lastModified: file.lastModified,
-      //         size: file.size,
-      //         url: url,
-      //       };
-      //     } catch (error) {
-      //       console.error(`Failed to get URL for file ${file.path}:`, error);
-      //       return {
-      //         key: file.path,
-      //         lastModified: file.lastModified,
-      //         size: file.size,
-      //         url: undefined,
-      //       };
-      //     }
-      //   })
-      // );
-      // setUploadedFiles(filesWithUrls);
+      const files = await storageService.listFiles();
+      const filesWithUrls = await Promise.all(
+        files.map(async (file) => {
+          try {
+            const url = await storageService.getFileUrl(file.path);
+            return {
+              key: file.path,
+              lastModified: file.lastModified,
+              size: file.size,
+              url: url,
+            };
+          } catch (error) {
+            console.error(`Failed to get URL for file ${file.path}:`, error);
+            return {
+              key: file.path,
+              lastModified: file.lastModified,
+              size: file.size,
+              url: undefined,
+            };
+          }
+        })
+      );
+      setUploadedFiles(filesWithUrls);
     } catch (error) {
       console.error("Failed to load uploaded files:", error);
     } finally {
